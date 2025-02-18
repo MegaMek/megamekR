@@ -16,42 +16,6 @@ planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
                               "population", "socioIndustrial", "hpg", "faction",
                               "hiringHall", "capital", "smallMoons", "size")
 
-
-get_values <- function(data_source, value_names) {
-  value_names |>
-    purrr::map(function(x) {
-      temp <- data_source[[x]]
-      if(is.null(temp)) {
-        return(NULL)
-      }
-      if(!is.list(temp)) {
-        if(x == "faction") {
-          paste(temp, collapse = ", ")
-        }
-        if(!(x %in% planet_values_sourceable)) {
-          temp <- list(value = temp)
-        } else {
-          # create a source value
-          temp <- list(source = NA, value = temp)
-        }
-      } else {
-        if(x == "faction") {
-          temp$value <- paste(temp$value, collapse = ", ")
-        }
-      }
-      if(length(temp) > 1) {
-        # reverse the ordering
-        temp <- list(temp$value, temp$source)
-
-        temp <- setNames(temp, c(x, paste("source", x, sep="_")))
-      } else {
-        temp <- setNames(temp, x)
-      }
-      return(tibble::as_tibble(temp))
-    }) |>
-    dplyr::bind_cols()
-}
-
 read_planetary_data <- function(yaml_path) {
 
   raw_data <- yaml::read_yaml(yaml_path)
@@ -108,6 +72,42 @@ read_planetary_data <- function(yaml_path) {
               system_events = system_event_data,
               planetary_events = planetary_events))
 
+}
+
+
+get_values <- function(data_source, value_names) {
+  value_names |>
+    purrr::map(function(x) {
+      temp <- data_source[[x]]
+      if(is.null(temp)) {
+        return(NULL)
+      }
+      if(!is.list(temp)) {
+        if(x == "faction") {
+          paste(temp, collapse = ", ")
+        }
+        if(!(x %in% planet_values_sourceable)) {
+          temp <- list(value = temp)
+        } else {
+          # create a source value
+          temp <- list(source = NA, value = temp)
+        }
+      } else {
+        if(x == "faction") {
+          temp$value <- paste(temp$value, collapse = ", ")
+        }
+      }
+      if(length(temp) > 1) {
+        # reverse the ordering
+        temp <- list(temp$value, temp$source)
+
+        temp <- setNames(temp, c(x, paste("source", x, sep="_")))
+      } else {
+        temp <- setNames(temp, x)
+      }
+      return(tibble::as_tibble(temp))
+    }) |>
+    dplyr::bind_cols()
 }
 
 
