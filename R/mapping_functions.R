@@ -1,0 +1,88 @@
+
+planetary_system_values <- c("id", "sucsId", "xcood", "ycood", "spectralType",
+                             "primarySlot")
+planetary_system_events <- c("date", "nadirCharge", "zenithCharge")
+planet_values <- c("sysPos", "name", "type", "orbitalDist", "pressure",
+                   "atmosphere", "composition", "gravity", "diameter",
+                   "density", "dayLength", "yearLength", "temperature",
+                   "water")
+planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
+                              "sysPos", "pressure", "atmosphere", "composition",
+                              "gravity", "diameter", "density", "dayLength",
+                              "yearLength", "temperature", "water",
+                              "population", "socioIndustrial", "hpg")
+
+
+get_values <- function(data_source, value_names) {
+  value_names |>
+    purrr::map(function(x) {
+      temp <- data_source[[x]]
+      if(is.null(temp)) {
+        return(NULL)
+      }
+      if(!is.list(temp)) {
+        if(x == "faction") {
+          paste(temp, collapse = ", ")
+        }
+        if(!(x %in% planet_values_sourceable)) {
+          temp <- list(value = temp)
+        } else {
+          # create a source value
+          temp <- list(source = NA, value = temp)
+        }
+      } else {
+        if(x == "faction") {
+          temp$value <- paste(temp$value, collapse = ", ")
+        }
+      }
+      if(length(temp) > 1) {
+        # reverse the ordering
+        temp <- list(temp$value, temp$source)
+
+        temp <- setNames(temp, c(x, paste("source", x, sep="_")))
+      } else {
+        temp <- setNames(temp, x)
+      }
+      return(tibble::as_tibble(temp))
+    }) |>
+    dplyr::bind_cols()
+}
+
+read_planetary_data <- function(yaml_path) {
+
+  raw_data <- yaml::read_yaml(yaml_path)
+
+  # get base system data
+  system_data <-  get_values(raw_data, planetary_system_values)
+
+  system_event_data <- NULL
+  if(!is.null(raw_data$event)) {
+    system_event_data <- purrr::map(raw_data$event, function(event) {
+      get_values(event, planetary_system_events)
+    }) |>
+      dplyr::bind_rows()
+  }
+
+  # get base planet data
+  planet_data <- purrr::map(raw_data$planet, function(p) {
+    get_values(p, planet_values)
+  }) |>
+    dplyr::bind_rows()
+
+  planetary_events <- purrr::map(raw_data$planet, function(p) {
+    if(!is.null(p$event)) {
+      purrr::map(p$event, function(event) {
+        get_values(event, c("date","population", "socioIndustrial", "faction"))
+      }) |>
+        dplyr::bind_rows() |>
+        dplyr::mutate(date = lubridate::as_date(date))
+    }
+  })
+
+
+  ##TODO: landmasses
+  ##TODO: satellites
+
+}
+
+
