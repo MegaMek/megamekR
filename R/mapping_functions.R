@@ -8,13 +8,13 @@ planet_events <- c("date", "population", "socioIndustrial", "hpg", "faction",
 planet_values <- c("sysPos", "name", "type", "orbitalDist", "pressure",
                    "atmosphere", "composition", "gravity", "diameter",
                    "density", "dayLength", "yearLength", "temperature",
-                   "water", "lifeForm")
+                   "water", "lifeForm", "smallMoons", "icon")
 planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
                               "sysPos", "pressure", "atmosphere", "composition",
                               "gravity", "diameter", "density", "dayLength",
                               "yearLength", "temperature", "water", "lifeForm",
                               "population", "socioIndustrial", "hpg", "faction",
-                              "hiringHall")
+                              "hiringHall", "capital", "smallMoons", "size")
 
 
 get_values <- function(data_source, value_names) {
@@ -83,12 +83,28 @@ read_planetary_data <- function(yaml_path) {
     }
   })
 
+  landmasses <- purrr::map(raw_data$planet, function(p) {
+    if(!is.null(p$landmass)) {
+      purrr::map(p$landmass, function(landmass) {
+        get_values(landmass, c("name", "capital"))
+      }) |>
+        dplyr::bind_rows()
+    }
+  })
 
-  ##TODO: landmasses
-  ##TODO: satellites
+  satellites <- purrr::map(raw_data$planet, function(p) {
+    if(!is.null(p$satellite)) {
+      purrr::map(p$satellite, function(satellite) {
+        get_values(satellite, c("name", "size", "icon"))
+      }) |>
+        dplyr::bind_rows()
+    }
+  })
 
   return(list(system = system_data,
               planets = planet_data,
+              satellites = satellites,
+              landmasses = landmasses,
               system_events = system_event_data,
               planetary_events = planetary_events))
 
