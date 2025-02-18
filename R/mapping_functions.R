@@ -2,15 +2,19 @@
 planetary_system_values <- c("id", "sucsId", "xcood", "ycood", "spectralType",
                              "primarySlot")
 planetary_system_events <- c("date", "nadirCharge", "zenithCharge")
+planet_events <- c("date", "population", "socioIndustrial", "hpg", "faction",
+                   "hiringHall", "atmosphere", "pressure", "composition",
+                   "water", "temperature", "lifeForm", "dayLength")
 planet_values <- c("sysPos", "name", "type", "orbitalDist", "pressure",
                    "atmosphere", "composition", "gravity", "diameter",
                    "density", "dayLength", "yearLength", "temperature",
-                   "water")
+                   "water", "lifeForm")
 planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
                               "sysPos", "pressure", "atmosphere", "composition",
                               "gravity", "diameter", "density", "dayLength",
-                              "yearLength", "temperature", "water",
-                              "population", "socioIndustrial", "hpg")
+                              "yearLength", "temperature", "water", "lifeForm",
+                              "population", "socioIndustrial", "hpg", "faction",
+                              "hiringHall")
 
 
 get_values <- function(data_source, value_names) {
@@ -72,7 +76,7 @@ read_planetary_data <- function(yaml_path) {
   planetary_events <- purrr::map(raw_data$planet, function(p) {
     if(!is.null(p$event)) {
       purrr::map(p$event, function(event) {
-        get_values(event, c("date","population", "socioIndustrial", "faction"))
+        get_values(event, planet_events)
       }) |>
         dplyr::bind_rows() |>
         dplyr::mutate(date = lubridate::as_date(date))
@@ -82,6 +86,11 @@ read_planetary_data <- function(yaml_path) {
 
   ##TODO: landmasses
   ##TODO: satellites
+
+  return(list(system = system_data,
+              planets = planet_data,
+              system_events = system_event_data,
+              planetary_events = planetary_events))
 
 }
 
