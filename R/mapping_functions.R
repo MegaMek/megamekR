@@ -148,19 +148,23 @@ write_tibble_list <- function(df, variables) {
       data_list <- list()
       for(variable in variables) {
         if(variable %in% colnames(row) && !is.na(pull(row, variable))) {
+          value <- pull(row, variable)
+          if(is.Date(value)) {
+            # special hack for dates, which need to be converted back
+            # to characters
+            value <- as.character(value)
+          }
+          if(variable == "faction") {
+            # factions are special as you can have multiple so need to be
+            #inside unnamed list
+            value <- as.list(str_split_1(value, ","))
+          }
           if(variable %in% planet_values_sourceable) {
             # we need to write a sourceable value
-            value <- pull(row, variable)
             source <- pull(row, paste("source_", variable, sep = ""))
             data_list[[variable]] <- write_sourceable_value(value, source)
           } else {
             # we can just write the value
-            # special hack for dates, which need to be converted back
-            # to characters
-            value <- pull(row, variable)
-            if(is.Date(value)) {
-              value <- as.character(value)
-            }
             data_list[[variable]] <- value
           }
 
