@@ -2,20 +2,20 @@
 planetary_system_values <- c("id", "sucsId", "xcood", "ycood", "spectralType",
                              "primarySlot")
 planetary_system_events <- c("date", "nadirCharge", "zenithCharge")
-planet_events <- c("date", "population", "socioIndustrial", "hpg", "faction",
+planet_events <- c("date", "faction", "population", "socioIndustrial", "hpg",
                    "hiringHall", "atmosphere", "pressure", "composition",
                    "water", "temperature", "lifeForm", "dayLength")
-planet_values <- c("name","sysPos", "type", "orbitalDist", "pressure",
+planet_values <- c("name", "type", "orbitalDist", "sysPos", "icon", "pressure",
                    "atmosphere", "composition", "gravity", "diameter",
                    "density", "dayLength", "yearLength", "temperature",
-                   "water", "lifeForm", "smallMoons", "icon")
+                   "water", "lifeForm", "desc", "ring", "smallMoons")
 planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
                               "sysPos", "pressure", "atmosphere", "composition",
                               "gravity", "diameter", "density", "dayLength",
                               "yearLength", "temperature", "water", "lifeForm",
                               "population", "socioIndustrial", "hpg", "faction",
-                              "hiringHall", "capital", "smallMoons", "size",
-                              "nadirCharge", "zenithCharge")
+                              "hiringHall", "capital", "ring", "smallMoons",
+                              "size", "nadirCharge", "zenithCharge")
 
 read_planetary_data <- function(yaml_path) {
 
@@ -81,8 +81,18 @@ write_planetary_data <- function(planetary_system, path) {
   # everything goes in lists of lists of lists
 
   # start with overall system information
-  planet_list <- write_tibble_list(planetary_system$system,
-                                   planetary_system_values)
+  planet_list <- list(id = planetary_system$system$id,
+                      sucsId = planetary_system$system$sucsId,
+                      xcood = planetary_system$system$xcood,
+                      ycood = planetary_system$system$ycood,
+                      spectralType = write_sourceable_value(
+                        planetary_system$system$spectralType,
+                        planetary_system$system$source_spectralType
+                      ),
+                      primarySlot = write_sourceable_value(
+                        planetary_system$system$primarySlot,
+                        planetary_system$system$source_primarySlot
+                      ))
 
   if(!is.null(planetary_system$system_events)) {
     planet_list$event <- write_tibble_list(planetary_system$system_events,
@@ -119,7 +129,8 @@ write_planetary_data <- function(planetary_system, path) {
 
   planet_list$planet <- planets
 
-  write_yaml(planet_list, file = path, indent.mapping.sequence = TRUE)
+  write_yaml(planet_list, file = path, indent.mapping.sequence = TRUE,
+             precision = 12)
 }
 
 write_sourceable_value <- function(value, source) {
