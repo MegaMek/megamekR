@@ -12,9 +12,9 @@ a url to the file.}
 }
 \value{
 The final returned object is a list of various planetary properties
-   with the end value in each case being a tibble. All sourceable values
-   produce both a value and a `source_{value}` variable. Missing values for
-   source variables indicate noncanon data.
+with the end value in each case being a tibble. All sourceable values
+produce both a value and a \verb{source_\{value\}} variable. Missing values for
+source variables indicate noncanon data.
 }
 \description{
 This function reads in a single planetary system file using the syntax of

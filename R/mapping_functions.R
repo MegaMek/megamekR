@@ -110,6 +110,23 @@ read_planetary_data <- function(yaml_path) {
 
 }
 
+#' Write a single planetary system in memory to a file in yaml format
+#'
+#' @description
+#' This function writes a single planetary system object read in by
+#' [read_planetary_data()].
+#'
+#' @param planetary_system A planetary system object created by [read_planetary_data()].
+#'
+#' @param yaml_path character string providing the path to the yaml file.
+#'
+#' @examples
+#'
+#' # read in Earth's data directly from GitHub
+#' terra <- read_planetary_data("https://raw.githubusercontent.com/MegaMek/mekhq/refs/heads/master/MekHQ/data/universe/planetary_systems/canon_systems/Terra.yml")
+#' write_planetary_data(terra, ".")
+#'
+#' @export
 write_planetary_data <- function(planetary_system, path) {
   # everything goes in lists of lists of lists
 
@@ -166,6 +183,7 @@ write_planetary_data <- function(planetary_system, path) {
              precision = 12)
 }
 
+# helper function
 write_sourceable_value <- function(value, source) {
   if(is.na(source)) {
     return(value)
@@ -174,6 +192,7 @@ write_sourceable_value <- function(value, source) {
   }
 }
 
+# helper function
 write_tibble_list <- function(df, variables) {
   df |>
     pmap(function(...) {
@@ -207,7 +226,7 @@ write_tibble_list <- function(df, variables) {
     })
 }
 
-
+# helper function
 get_values <- function(data_source, value_names) {
   value_names |>
     purrr::map(function(x) {
