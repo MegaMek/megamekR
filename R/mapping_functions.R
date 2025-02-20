@@ -30,6 +30,26 @@ SOURCEABLE_VARS <- c("spectralType", "primarySlot", "name", "type",
 
 # IO functions --------------------------------------------------------------
 
+#' Read in a single planetary system from yaml
+#'
+#' @description
+#' This function reads in a single planetary system file using the syntax of
+#' MekHQ.
+#'
+#' @param yaml_path character string providing the path to the yaml file or
+#'     a url to the file.
+#'
+#' @returns The final returned object is a list of various planetary properties
+#'    with the end value in each case being a tibble. All sourceable values
+#'    produce both a value and a `source_{value}` variable. Missing values for
+#'    source variables indicate noncanon data.
+#'
+#' @examples
+#'
+#' # read in Earth's data directly from GitHub
+#' terra <- read_planetary_data("https://raw.githubusercontent.com/MegaMek/mekhq/refs/heads/master/MekHQ/data/universe/planetary_systems/canon_systems/Terra.yml")
+#'
+#' @export
 read_planetary_data <- function(yaml_path) {
 
   raw_data <- yaml::read_yaml(yaml_path)
