@@ -1,18 +1,24 @@
 Package: megamekR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Manage MegaMek Universe Data
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Aaron", "Gullickson",
+      email = "aarongullickson@example.com",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
+Description: Functions for working with MegaMek data in XML and YAML formats
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/AaronGullickson/megamekR
 BugReports: https://github.com/AaronGullickson/megamekR/issues
+Imports:
+    yaml,
+    purrr,
+    dplyr,
+    lubridate,
+    tibble
+    
