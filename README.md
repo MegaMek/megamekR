@@ -9,4 +9,4 @@ To install the package, you must have `devtools` installed:
 
 ```r
 devtools::install_github("megamek/megamekR")
-``
+```
