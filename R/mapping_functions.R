@@ -1,33 +1,46 @@
+# Constants ------------------------------------------------------------------
 
-planetary_system_values <- c("id", "sucsId", "xcood", "ycood", "spectralType",
-                             "primarySlot")
-planetary_system_events <- c("date", "nadirCharge", "zenithCharge")
-planet_events <- c("date", "faction", "population", "socioIndustrial", "hpg",
-                   "hiringHall", "atmosphere", "pressure", "composition",
-                   "water", "temperature", "lifeForm", "dayLength")
-planet_values <- c("name", "type", "orbitalDist", "sysPos", "icon", "pressure",
+# these character vectors define the various variables we need to extract from
+# the yaml data. The order of these will affect the order variables are written
+# out in yaml.
+
+# values we expect to find at the level of the planetary system
+PLANETARY_SYSTEM_VARS <- c("id", "sucsId", "xcood", "ycood",
+                                "spectralType", "primarySlot")
+# values we expect to find in planetary system events
+PLANETARY_SYSTEM_EVENT_VARS <- c("date", "nadirCharge", "zenithCharge")
+# values we expect to find in planetary events
+PLANETARY_EVENT_VARS <- c("date", "faction", "population", "socioIndustrial",
+                          "hpg", "hiringHall", "atmosphere", "pressure",
+                          "composition", "water", "temperature", "lifeForm",
+                          "dayLength")
+# values we expect to find in the base planet data (not events)
+PLANET_VARS <- c("name", "type", "orbitalDist", "sysPos", "icon", "pressure",
                    "atmosphere", "composition", "gravity", "diameter",
                    "density", "dayLength", "yearLength", "temperature",
                    "water", "lifeForm", "desc", "ring", "smallMoons")
-planet_values_sourceable <- c("spectralType", "primarySlot", "name", "type",
-                              "sysPos", "pressure", "atmosphere", "composition",
-                              "gravity", "diameter", "density", "dayLength",
-                              "yearLength", "temperature", "water", "lifeForm",
-                              "population", "socioIndustrial", "hpg", "faction",
-                              "hiringHall", "capital", "ring", "smallMoons",
-                              "size", "nadirCharge", "zenithCharge")
+# values that are potentially sourceable in the data - can come at any level
+SOURCEABLE_VARS <- c("spectralType", "primarySlot", "name", "type",
+                     "sysPos", "pressure", "atmosphere", "composition",
+                     "gravity", "diameter", "density", "dayLength",
+                     "yearLength", "temperature", "water", "lifeForm",
+                     "population", "socioIndustrial", "hpg", "faction",
+                     "hiringHall", "capital", "ring", "smallMoons",
+                     "size", "nadirCharge", "zenithCharge")
+
+# IO functions --------------------------------------------------------------
 
 read_planetary_data <- function(yaml_path) {
 
   raw_data <- yaml::read_yaml(yaml_path)
 
   # get base system data
-  system_data <-  get_values(raw_data, planetary_system_values)
+  system_data <-  get_values(raw_data, PLANETARY_SYSTEM_VARS)
 
   system_event_data <- NULL
   if(!is.null(raw_data$event)) {
     system_event_data <- purrr::map(raw_data$event, function(event) {
-      get_values(event, planetary_system_events) |>
+      get_values(event, PLANETARY_SYSTEM_EVENT_VARS) |>
         dplyr::mutate(date = lubridate::as_date(date))
     }) |>
       dplyr::bind_rows() |>
@@ -36,14 +49,14 @@ read_planetary_data <- function(yaml_path) {
 
   # get base planet data
   planet_data <- purrr::map(raw_data$planet, function(p) {
-    get_values(p, planet_values)
+    get_values(p, PLANET_VARS)
   }) |>
     dplyr::bind_rows()
 
   planetary_events <- purrr::map(raw_data$planet, function(p) {
     if(!is.null(p$event)) {
       purrr::map(p$event, function(event) {
-        get_values(event, planet_events)
+        get_values(event, PLANETARY_EVENT_VARS)
       }) |>
         dplyr::bind_rows() |>
         dplyr::mutate(date = lubridate::as_date(date))
@@ -96,11 +109,11 @@ write_planetary_data <- function(planetary_system, path) {
 
   if(!is.null(planetary_system$system_events)) {
     planet_list$event <- write_tibble_list(planetary_system$system_events,
-                                           planetary_system_events)
+                                           PLANETARY_SYSTEM_EVENT_VARS)
   }
 
   # get base planet information
-  planets <- write_tibble_list(planetary_system$planets, planet_values)
+  planets <- write_tibble_list(planetary_system$planets, PLANET_VARS)
 
   # now cycle through to add in landmasses, satellites, and events
   for(i in 1:length(planets)) {
@@ -121,7 +134,7 @@ write_planetary_data <- function(planetary_system, path) {
     # add planetary events
     events <- planetary_system$planetary_events[[i]]
     if(!is.null(events)) {
-      planet$event <- write_tibble_list(events, planet_events)
+      planet$event <- write_tibble_list(events, PLANETARY_EVENT_VARS)
     }
 
     planets[[i]] <- planet
@@ -144,12 +157,12 @@ write_sourceable_value <- function(value, source) {
 write_tibble_list <- function(df, variables) {
   df |>
     pmap(function(...) {
-      row <- tibble(...)
+      row <- tibble::tibble(...)
       data_list <- list()
       for(variable in variables) {
-        if(variable %in% colnames(row) && !is.na(pull(row, variable))) {
-          value <- pull(row, variable)
-          if(is.Date(value)) {
+        if(variable %in% colnames(row) && !is.na(dplyr::pull(row, variable))) {
+          value <- dplyr::pull(row, variable)
+          if(lubridate::is.Date(value)) {
             # special hack for dates, which need to be converted back
             # to characters
             value <- as.character(value)
@@ -157,11 +170,11 @@ write_tibble_list <- function(df, variables) {
           if(variable == "faction") {
             # factions are special as you can have multiple so need to be
             #inside unnamed list
-            value <- as.list(str_split_1(value, ","))
+            value <- as.list(stringr::str_split_1(value, ","))
           }
-          if(variable %in% planet_values_sourceable) {
+          if(variable %in% SOURCEABLE_VARS) {
             # we need to write a sourceable value
-            source <- pull(row, paste("source_", variable, sep = ""))
+            source <- dplyr::pull(row, paste("source_", variable, sep = ""))
             data_list[[variable]] <- write_sourceable_value(value, source)
           } else {
             # we can just write the value
@@ -186,7 +199,7 @@ get_values <- function(data_source, value_names) {
         if(x == "faction") {
           paste(temp, collapse = ", ")
         }
-        if(!(x %in% planet_values_sourceable)) {
+        if(!(x %in% SOURCEABLE_VARS)) {
           temp <- list(value = temp)
         } else {
           # create a source value
