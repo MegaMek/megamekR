@@ -259,6 +259,8 @@ get_values <- function(data_source, value_names) {
       }
       return(tibble::as_tibble(temp))
     }) |>
-    dplyr::bind_cols()
+    dplyr::bind_cols() |>
+    # ensure that all source variables are recorded as character values
+    dplyr::mutate(dplyr::across(dplyr::starts_with("source_"), as.character))
 }
 
