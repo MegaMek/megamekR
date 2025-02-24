@@ -28,6 +28,18 @@ SOURCEABLE_VARS <- c("spectralType", "primarySlot", "name", "type",
                      "hiringHall", "capital", "ring", "smallMoons",
                      "size", "nadirCharge", "zenithCharge")
 
+# these vectors define the factor levels for a variety of variables
+PLANET_TYPE_LEVELS <- c("ASTEROID_BELT", "DWARF_TERRESTRIAL", "TERRESTRIAL",
+                        "GIANT_TERRESTRIAL", "ICE_GIANT", "GAS_GIANT")
+PRESSURE_LEVELS <- c("VACUUM", "TRACE", "THIN", "STANDARD", "HIGH", "VERY_HIGH")
+ATMOSPHERE_LEVELS <- c("NONE", "TAINTEDPOISON", "TAINTEDCAUSTIC",
+                       "TAINTEDFLAME", "TOXICPOISON", "TOXICCAUSTIC",
+                       "TOXICFLAME", "BREATHABLE")
+LIFEFORM_LEVELS <- c("NONE", "MICROBE", "PLANT", "INSECT", "FISH", "AMPHIBIAN",
+                     "REPTILE", "BIRD", "MAMMAL")
+HPG_LEVELS <- c("A","B","C","D","X")
+HIRING_HALL_LEVELS <- c("NONE", "QUESTIONABLE", "MINOR", "STANDARD", "GREAT")
+
 # IO functions --------------------------------------------------------------
 
 #' Read in a single planetary system from yaml
@@ -228,7 +240,7 @@ write_tibble_list <- function(df, variables) {
 
 # helper function
 get_values <- function(data_source, value_names) {
-  value_names |>
+  df <- value_names |>
     purrr::map(function(x) {
       temp <- data_source[[x]]
       if(is.null(temp)) {
@@ -262,5 +274,38 @@ get_values <- function(data_source, value_names) {
     dplyr::bind_cols() |>
     # ensure that all source variables are recorded as character values
     dplyr::mutate(dplyr::across(dplyr::starts_with("source_"), as.character))
+
+  # check to see if df contains certain variables that need to be converted to
+  # factors
+  if("type" %in% colnames(df)) {
+    df <- df |>
+      mutate(type = factor(type, levels = PLANET_TYPE_LEVELS))
+  }
+  if("atmosphere" %in% colnames(df)) {
+    df <- df |>
+      mutate(atmosphere = factor(atmosphere, levels = ATMOSPHERE_LEVELS))
+  }
+  if("pressure" %in% colnames(df)) {
+    df <- df |>
+      mutate(pressure = factor(pressure, levels = PRESSURE_LEVELS))
+  }
+  if("lifeForm" %in% colnames(df)) {
+    df <- df |>
+      mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
+  }
+  if("lifeForm" %in% colnames(df)) {
+    df <- df |>
+      mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
+  }
+  if("hpg" %in% colnames(df)) {
+    df <- df |>
+      mutate(hpg = factor(hpg, levels = HPG_LEVELS))
+  }
+  if("hiringHall" %in% colnames(df)) {
+    df <- df |>
+      mutate(hiringHall = factor(hiringHall, levels = HIRING_HALL_LEVELS))
+  }
+
+  return(df)
 }
 
