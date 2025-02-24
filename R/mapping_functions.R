@@ -195,7 +195,7 @@ write_sourceable_value <- function(value, source) {
 # helper function
 write_tibble_list <- function(df, variables) {
   df |>
-    pmap(function(...) {
+    purrr::pmap(function(...) {
       row <- tibble::tibble(...)
       data_list <- list()
       for(variable in variables) {
