@@ -179,8 +179,8 @@ write_planetary_data <- function(planetary_system, path) {
 
   planet_list$planet <- planets
 
-  write_yaml(planet_list, file = path, indent.mapping.sequence = TRUE,
-             precision = 12)
+  yaml::write_yaml(planet_list, file = path, indent.mapping.sequence = TRUE,
+                   precision = 12)
 }
 
 # helper function
