@@ -279,31 +279,31 @@ get_values <- function(data_source, value_names) {
   # factors
   if("type" %in% colnames(df)) {
     df <- df |>
-      mutate(type = factor(type, levels = PLANET_TYPE_LEVELS))
+      dplyr::mutate(type = factor(type, levels = PLANET_TYPE_LEVELS))
   }
   if("atmosphere" %in% colnames(df)) {
     df <- df |>
-      mutate(atmosphere = factor(atmosphere, levels = ATMOSPHERE_LEVELS))
+      dplyr::mutate(atmosphere = factor(atmosphere, levels = ATMOSPHERE_LEVELS))
   }
   if("pressure" %in% colnames(df)) {
     df <- df |>
-      mutate(pressure = factor(pressure, levels = PRESSURE_LEVELS))
+      dplyr::mutate(pressure = factor(pressure, levels = PRESSURE_LEVELS))
   }
   if("lifeForm" %in% colnames(df)) {
     df <- df |>
-      mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
+      dplyr::mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
   }
   if("lifeForm" %in% colnames(df)) {
     df <- df |>
-      mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
+      dplyr::mutate(lifeForm = factor(lifeForm, levels = LIFEFORM_LEVELS))
   }
   if("hpg" %in% colnames(df)) {
     df <- df |>
-      mutate(hpg = factor(hpg, levels = HPG_LEVELS))
+      dplyr::mutate(hpg = factor(hpg, levels = HPG_LEVELS))
   }
   if("hiringHall" %in% colnames(df)) {
     df <- df |>
-      mutate(hiringHall = factor(hiringHall, levels = HIRING_HALL_LEVELS))
+      dplyr::mutate(hiringHall = factor(hiringHall, levels = HIRING_HALL_LEVELS))
   }
 
   return(df)
