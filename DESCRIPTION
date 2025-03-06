@@ -20,6 +20,7 @@ Imports:
     purrr,
     dplyr,
     lubridate,
-    tibble
+    tibble,
+    stringr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
