@@ -130,13 +130,13 @@ read_planetary_data <- function(yaml_path) {
 #'
 #' @param planetary_system A planetary system object created by [read_planetary_data()].
 #'
-#' @param yaml_path character string providing the path to the yaml file.
+#' @param path character string providing the path to the yaml file output.
 #'
 #' @examples
 #'
 #' # read in Earth's data directly from GitHub
 #' terra <- read_planetary_data("https://raw.githubusercontent.com/MegaMek/mekhq/refs/heads/master/MekHQ/data/universe/planetary_systems/canon_systems/Terra.yml")
-#' write_planetary_data(terra, ".")
+#' write_planetary_data(terra, "test.yml")
 #'
 #' @export
 write_planetary_data <- function(planetary_system, path) {
@@ -265,9 +265,9 @@ get_values <- function(data_source, value_names) {
         # reverse the ordering
         temp <- list(temp$value, temp$source)
 
-        temp <- setNames(temp, c(x, paste("source", x, sep="_")))
+        temp <- stats::setNames(temp, c(x, paste("source", x, sep="_")))
       } else {
-        temp <- setNames(temp, x)
+        temp <- stats::setNames(temp, x)
       }
       return(tibble::as_tibble(temp))
     }) |>

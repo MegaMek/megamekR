@@ -9,7 +9,7 @@ write_planetary_data(planetary_system, path)
 \arguments{
 \item{planetary_system}{A planetary system object created by \code{\link[=read_planetary_data]{read_planetary_data()}}.}
 
-\item{yaml_path}{character string providing the path to the yaml file.}
+\item{path}{character string providing the path to the yaml file output.}
 }
 \description{
 This function writes a single planetary system object read in by
@@ -19,6 +19,6 @@ This function writes a single planetary system object read in by
 
 # read in Earth's data directly from GitHub
 terra <- read_planetary_data("https://raw.githubusercontent.com/MegaMek/mekhq/refs/heads/master/MekHQ/data/universe/planetary_systems/canon_systems/Terra.yml")
-write_planetary_data(terra, ".")
+write_planetary_data(terra, "test.yml")
 
 }

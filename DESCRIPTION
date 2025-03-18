@@ -1,7 +1,7 @@
 Package: megamekR
 Type: Package
 Title: Manage MegaMek Universe Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(
       "Aaron", "Gullickson",
@@ -9,8 +9,8 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Functions for working with MegaMek data in XML and YAML formats
-License: What license is it under?
+Description: Functions for working with MegaMek data in XML and YAML formats.
+License: GNU GENERAL PUBLIC LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/AaronGullickson/megamekR
