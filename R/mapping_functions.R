@@ -221,7 +221,7 @@ write_tibble_list <- function(df, variables) {
           if(variable == "faction") {
             # factions are special as you can have multiple so need to be
             #inside unnamed list
-            value <- as.list(stringr::str_split_1(value, ","))
+            value <- as.list(stringr::str_trim(stringr::str_split_1(value, ",")))
           }
           if(variable %in% SOURCEABLE_VARS) {
             # we need to write a sourceable value
