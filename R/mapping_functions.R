@@ -10,10 +10,10 @@ PLANETARY_SYSTEM_VARS <- c("id", "sucsId", "xcood", "ycood",
 # values we expect to find in planetary system events
 PLANETARY_SYSTEM_EVENT_VARS <- c("date", "nadirCharge", "zenithCharge")
 # values we expect to find in planetary events
-PLANETARY_EVENT_VARS <- c("date", "faction", "population", "socioIndustrial",
-                          "hpg", "hiringHall", "atmosphere", "pressure",
-                          "composition", "water", "temperature", "lifeForm",
-                          "dayLength")
+PLANETARY_EVENT_VARS <- c("date", "faction", "hpg", "population",
+                          "socioIndustrial", "hiringHall", "atmosphere",
+                          "pressure", "composition", "water", "temperature",
+                          "lifeForm", "dayLength")
 # values we expect to find in the base planet data (not events)
 PLANET_VARS <- c("name", "type", "orbitalDist", "sysPos", "icon", "pressure",
                    "atmosphere", "composition", "gravity", "diameter",
@@ -24,7 +24,7 @@ SOURCEABLE_VARS <- c("spectralType", "primarySlot", "name", "type",
                      "sysPos", "pressure", "atmosphere", "composition",
                      "gravity", "diameter", "density", "dayLength",
                      "yearLength", "temperature", "water", "lifeForm",
-                     "population", "socioIndustrial", "hpg", "faction",
+                     "hpg", "population", "socioIndustrial", "faction",
                      "hiringHall", "capital", "ring", "smallMoons",
                      "size", "nadirCharge", "zenithCharge")
 
