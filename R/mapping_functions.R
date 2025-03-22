@@ -248,7 +248,7 @@ get_values <- function(data_source, value_names) {
       }
       if(!is.list(temp)) {
         if(x == "faction") {
-          paste(temp, collapse = ", ")
+          temp <- paste(temp, collapse = ", ")
         }
         if(!(x %in% SOURCEABLE_VARS)) {
           temp <- list(value = temp)
